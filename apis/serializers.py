@@ -60,7 +60,7 @@ class OrderItemAddOnesSerializer(serializers.ModelSerializer):
 class Order_ItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer(many=False)
     order_item_add_ons = OrderItemAddOnesSerializer(many=False)
-    # order = OrderSerializer(many=False)
+    order = OrderSerializer(many=False)
     class Meta:
         model = Order_Item
         fields = '__all__'
