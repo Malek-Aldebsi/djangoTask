@@ -305,7 +305,7 @@ class Incident_report (models.Model):
 
 
 class Order(models.Model):
-    order_Item = models.ForeignKey('Order_Item', on_delete=models.CASCADE, blank=True, null=True)
+    ########order_Item = models.ForeignKey('Order_Item', on_delete=models.CASCADE, blank=True, null=True)
     brand_branch = models.ForeignKey(Brand_branch, on_delete=models.CASCADE, blank=True, null=True, related_name="order")
     order_id = models.IntegerField(null=True)
     status = models.CharField(max_length=50, null=True, blank=True)
@@ -324,9 +324,14 @@ class Order(models.Model):
     def __str__(self):
         return str(self.brand_branch)
 
+    @property
+    def order_items(self):
+        queryset = self.order_item_set.all().values_list('quantity', flat=True)
+        return queryset
+
 
 class Item(models.Model):
-    name =  models.CharField(max_length=500)
+    name = models.CharField(max_length=500)
     cost = models.DecimalField(max_digits=5, decimal_places=3, null=True, blank=True)
 
     def __str__(self):
@@ -334,7 +339,7 @@ class Item(models.Model):
 
     @property
     def get_item_cost(self):
-        total = sum([item.quantity for item in self.order_item.all()])
+        total = sum([item.quantity for item in self.order_item_set.all()])
         return total * self.cost
 
 class Add_ons(models.Model):
@@ -346,6 +351,7 @@ class Add_ons(models.Model):
 
 
 class Order_item_add_ons(models.Model):
+    #################
     Add_ons = models.ForeignKey(Add_ons, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.IntegerField(null=True, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=3, null=True, blank=True)
@@ -354,10 +360,17 @@ class Order_item_add_ons(models.Model):
 
 
 class Order_Item(models.Model):
-    order_item_add_ones = models.ForeignKey(Order_item_add_ons, on_delete=models.CASCADE, null=True, blank=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE,related_name="order_item")
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.IntegerField(blank=True, null=True,)
-    # order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    price =  models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True,)
+    #########
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, blank=True, null=True)
+    price = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True,)
+    order_item_add_ons = models.ForeignKey(Order_item_add_ons, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return str(self.id)
+
+
+
+
+

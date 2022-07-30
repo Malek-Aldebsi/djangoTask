@@ -1,7 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import OrderSerializer
-from .models import Order
+from .serializers import OrderSerializer, Order_ItemSerializer, ItemSerializer, OrderItemAddOnesSerializer
+from .models import Order, Order_Item
+
+
 @api_view(['POST'])
 def getOrder(request):
     id = request.data['id']
@@ -67,48 +69,18 @@ def getResturantName(request):
 
 
 @api_view(['POST'])
-def getOrderQuantity(request):
+def getOrderItem(request):
     id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['quantity'])
+    Items = Order.objects.get(id=id).order_item_set.all()
+
+    serializer = Order_ItemSerializer(Items, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])
-def getOrderItemName(request):
+def getOrderAddOnes(request):
     id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['item']['name'])
+    Add_ons = Order.objects.get(id=id).order_item_set.all()
 
-@api_view(['POST'])
-def getOrderItemCost(request):
-    id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['item']['cost'])
-
-
-@api_view(['POST'])
-def getOrderAddOnesName(request):
-    id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['order_item_add_ones']['Add_ons']['name'])
-
-
-@api_view(['POST'])
-def getOrderAddOnesCost(request):
-    id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['order_item_add_ones']['Add_ons']['cost'])
-
-
-@api_view(['POST'])
-def getOrderTotalPrice(request):
-    id = request.data['id']
-    Ord = Order.objects.get(id=id)
-    serializer = OrderSerializer(Ord, many=False)
-    return Response(serializer.data['order_Item']['price'])
-
+    serializer = Order_ItemSerializer(Add_ons, many=True)
+    return Response(serializer.data)
