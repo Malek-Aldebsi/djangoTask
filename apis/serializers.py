@@ -6,26 +6,26 @@ from .models import Order, Channel, Brand_branch, Fp_branch, Order_Item, Item, O
 class ChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = '__all__'
+        fields = ['name']
 
 
 class fpSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fp
-        fields = '__all__'
+        fields = ['name']
 
 class Fp_branchSerializer(serializers.ModelSerializer):
     fp = fpSerializer(many=False)
     class Meta:
         model = Fp_branch
-        fields = '__all__'
+        fields = ['fp']
 
 
 class Brand_branchSerializer(serializers.ModelSerializer):
     Fp_branch = Fp_branchSerializer(many=False)
     class Meta:
         model = Brand_branch
-        fields = '__all__'
+        fields = ['Fp_branch']
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -39,30 +39,38 @@ class Add_onsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class OrderItemAddOnesSerializer(serializers.ModelSerializer):
+    # order_item = Order_ItemSerializer(many=False)
+    Add_ons = Add_onsSerializer(many=False)
+    class Meta:
+        model = Order_item_add_ons
+        fields = '__all__'
+
+
+class Order_ItemSerializer(serializers.ModelSerializer):
+    item = ItemSerializer(many=False)
+    order_item_add_ons = OrderItemAddOnesSerializer(many=True)
+    # order = OrderSerializer(many=False)
+    class Meta:
+        model = Order_Item
+        fields = ['item', 'quantity', 'price', 'order_item_add_ons']
+
+
 class OrderSerializer(serializers.ModelSerializer):
     channel = ChannelSerializer(many=False)
     brand_branch = Brand_branchSerializer(many=False)
+    order_item = Order_ItemSerializer(many=True)
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['id', 'channel', 'brand_branch', 'order_id', 'status', 'date_time', 'total', 'delivery_zone', 'customer_name', 'customer_mobile_number','payment_fees', 'delivary_fee', 'payment_method', 'order_item']
 
 # class ItemSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Item
 #         fields = '__all__'
 
-class OrderItemAddOnesSerializer(serializers.ModelSerializer):
-    Add_ons = Add_onsSerializer(many=False)
-    class Meta:
-        model = Order_item_add_ons
-        fields = '__all__'
 
-class Order_ItemSerializer(serializers.ModelSerializer):
-    item = ItemSerializer(many=False)
-    order_item_add_ons = OrderItemAddOnesSerializer(many=False)
-    order = OrderSerializer(many=False)
-    class Meta:
-        model = Order_Item
-        fields = '__all__'
+
+
 
 

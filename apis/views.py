@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import OrderSerializer, Order_ItemSerializer, ItemSerializer, OrderItemAddOnesSerializer
-from .models import Order, Order_Item
+from .models import Order, Order_Item, Order_item_add_ons
 
 
 @api_view(['GET'])
@@ -78,9 +78,51 @@ def getOrderItem(request,pk):
 
 
 @api_view(['GET'])
-def getOrderAddOnes(request,pk):
-    # id = request.data['id']
-    Add_ons = Order.objects.get(id=pk).order_item_set.all()
+def getOrderAddOnes(request, pk):
+    # # id = request.data['id']
+    # Add_ons = Order.objects.get(id=pk).order_item_set.all()
+    #
+    # serializer = Order_ItemSerializer(Add_ons, many=True)
+    # return Response(serializer.data)
+    i, j = 0, 0
+    items = Order.objects.get(id=pk).order_item_set.all()
+    itemNum = len(items)
+    items = list(items)
+    lst = []
+    while i<itemNum:
+        addOnesNum = len(items[i].order_item_add_ons_set.all())
+        while j<addOnesNum:
+            addOnes = items[i].order_item_add_ons_set.all()[j]
+            lst.append(addOnes)
+            j+=1
+        j=0
+        i+=1
+    # Add_ons = Order_item_add_ons.objects.(order_item = order)
 
-    serializer = Order_ItemSerializer(Add_ons, many=True)
+    serializer = OrderItemAddOnesSerializer(lst, many=True)
     return Response(serializer.data)
+
+# @api_view(['GET'])
+# def getOrderAddOnes(request, pk):
+#     # # id = request.data['id']
+#     # Add_ons = Order.objects.get(id=pk).order_item_set.all()
+#     #
+#     # serializer = Order_ItemSerializer(Add_ons, many=True)
+#     # return Response(serializer.data)
+#     i, j = 0, 0
+#     items = Order.objects.get(id=pk).order_item_set.all()
+#     itemNum = len(items)
+#     items = list(items)
+#     lst = []
+#     while i<itemNum:
+#         addOnesNum = len(items[i].order_item_add_ons_set.all())
+#         while j<addOnesNum:
+#             addOnes = items[i].order_item_add_ons_set.all()[j]
+#             lst.append(addOnes)
+#             j+=1
+#         j=0
+#         i+=1
+#     # Add_ons = Order_item_add_ons.objects.(order_item = order)
+#
+#     serializer = OrderItemAddOnesSerializer(lst, many=True)
+#     return Response(serializer.data)
