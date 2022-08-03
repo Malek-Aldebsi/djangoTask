@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from . import models
-from .models import Order, Channel, Brand_branch, Fp_branch, Order_Item, Item, Order_item_add_ons, Add_ons, Fp
+from .models import Order, Channel, Brand_branch, Fp_branch, Order_Item, Item, Order_item_add_ons, Add_ons, Fp, Brand
 
 
 class ChannelSerializer(serializers.ModelSerializer):
@@ -21,11 +21,17 @@ class Fp_branchSerializer(serializers.ModelSerializer):
         fields = ['fp']
 
 
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['name']
+
 class Brand_branchSerializer(serializers.ModelSerializer):
     Fp_branch = Fp_branchSerializer(many=False)
+    brand = BrandSerializer(many=False)
     class Meta:
         model = Brand_branch
-        fields = ['Fp_branch']
+        fields = ['Fp_branch', 'brand']
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -68,9 +74,3 @@ class OrderSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Item
 #         fields = '__all__'
-
-
-
-
-
-
